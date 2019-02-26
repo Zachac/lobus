@@ -30,10 +30,6 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
   // This uses Ranvier's EventUtil class.
   const say = EventUtil.genSay(socket);
 
-  let startingAttributes = {
-    willpower: 5,
-    might: 6
-  };
   let startingClass = 'warrior';
 
   // Choices.createScenario takes a scenario ID and
@@ -48,13 +44,13 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
     .addChoices({
       beGood: {
         description: 'Do the right thing',
-        effect() {
+        effect(scenario, startingAttributes) {
           startingAttributes.willpower++;
         }
       },
       beBad: {
         description: 'Do the wrong thing via brute force.',
-        effect() {
+        effect(scenario, startingAttributes) {
           startingAttributes.might++;
         }
       }
@@ -68,26 +64,25 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
     .addChoices({
       bePaladin: {
         description: 'Become a paladin',
-        effect() {
-          startingClass = 'paladin';
-        },
         prerequisite(choices) {
-          return choices.toughChoice !== 'beBad'
+          return choices.toughChoice === 'beGood'
         }
       }
     },
     {
-      beThief: {
+      thief: {
         description: 'Become a thief',
-        effect() {
-          startingClass = 'thief';
-        }
         prerequisite(choices) {
           return choices.toughChoice === 'beBad'
         }
       }
     });
 
+  let startingAttributes = {
+    willpower: 5,
+    might: 6
+  };
+  
   Choices.run({
     // a list of scenarios, ran in the order they are defined
     scenarios: [
@@ -96,10 +91,17 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
     ],
     // socket to emit input-events to, see also Ranvier's input-events
     socket,
-     // function to broadcast to socket or player (or log for testing)
-    say
+    // function to broadcast to socket or player (or log for testing)
+    say,
+    args: startingAttributes
   })
-  .then(() => socket.emit('done'));
+  .then((choices) => {
+    // each scenario leaves a key with the id of the choice made
+    // hence we can simply use the key name (paladin/theif) for 
+    // the job scenario to find out what startingClass they chose
+    let startingClass = choices.job;
+    socket.emit('done', choices, startingAttributes);
+  });
 
   ```
 
