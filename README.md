@@ -44,14 +44,14 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
     .addChoices({
       beGood: {
         description: 'Do the right thing',
-        effect(scenario, startingAttributes) {
-          startingAttributes.willpower++;
+        effect(scenario, args) {
+          args.startingAttributes.willpower++;
         }
       },
       beBad: {
         description: 'Do the wrong thing via brute force.',
-        effect(scenario, startingAttributes) {
-          startingAttributes.might++;
+        effect(scenario, args) {
+          args.startingAttributes.might++;
         }
       }
     });
@@ -93,12 +93,12 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
     socket,
     // function to broadcast to socket or player (or log for testing)
     say,
-    args: startingAttributes
+    args: {startingAttributes}
   })
   .then((choices) => {
     // each scenario leaves a key with the id of the choice made
-    // hence we can simply use the key name (paladin/thief) for 
-    // the job scenario to find out what startingClass they chose
+    // hence we can simply use the id of the choice (paladin/thief)
+    // to find what startingClass they chose
     let startingClass = choices.job;
     socket.emit('done', choices, startingAttributes);
   });
