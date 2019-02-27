@@ -30,8 +30,6 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
   // This uses Ranvier's EventUtil class.
   const say = EventUtil.genSay(socket);
 
-  let startingClass = 'warrior';
-
   // Choices.createScenario takes a scenario ID and
   // a config with a title and/or description.
   // It returns a Scenario.
