@@ -62,7 +62,7 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
       description: 'This will have an effect on your character\'s starting skills or whatever.'
     })
     .addChoices({
-      bePaladin: {
+      paladin: {
         description: 'Become a paladin',
         prerequisite(choices) {
           return choices.toughChoice === 'beGood'
@@ -97,7 +97,7 @@ Lobus exposes all of the classes it uses internally, in case you want to compose
   })
   .then((choices) => {
     // each scenario leaves a key with the id of the choice made
-    // hence we can simply use the key name (paladin/theif) for 
+    // hence we can simply use the key name (paladin/thief) for 
     // the job scenario to find out what startingClass they chose
     let startingClass = choices.job;
     socket.emit('done', choices, startingAttributes);
